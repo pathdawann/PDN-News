@@ -1,16 +1,63 @@
 ---
+import { createClient } from '@supabase/supabase-js';
 
+// 1. Conectamos con Supabase usando las llaves de tu archivo .env
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// 2. Pedimos las noticias a la base de datos (ordenadas por la más reciente)
+let { data: posts, error } = await supabase
+  .from('posts')
+  .select('*')
+  .order('id', { ascending: false });
+
+if (error) console.log('Error cargando noticias:', error);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Pathdawann News</title>
+  </head>
+  <body class="bg-slate-100 font-sans">
+    
+    <header class="bg-blue-900 text-white p-6 mb-8">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold">Pathdawann News 🚀</h1>
+        <p class="text-blue-200">Lo último en tecnología, curado por IA</p>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4">
+      <div class="grid gap-8">
+        
+        {posts?.map((noticia) => (
+          <article class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Noticia #{noticia.id}</span>
+            
+            <h2 class="text-2xl font-bold text-slate-800 mt-2 mb-4">
+              {noticia.title}
+            </h2>
+            
+            <div class="prose text-slate-600 mb-6">
+              {/* Aquí mostramos un resumen o el contenido completo */}
+              <p>{noticia.content.substring(0, 200)}...</p>
+            </div>
+
+            <a href={`/post/${noticia.slug}`} class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+              Leer más →
+            </a>
+          </article>
+        ))}
+
+        {posts?.length === 0 && (
+          <p class="text-center text-slate-500">No hay noticias todavía. ¡Ejecuta tu n8n!</p>
+        )}
+
+      </div>
+    </main>
+
+  </body>
 </html>
