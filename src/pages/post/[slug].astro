@@ -1,14 +1,13 @@
 ---
+import Layout from '../../layouts/Layout.astro';
 import { createClient } from '@supabase/supabase-js';
-import { marked } from 'marked'; // <--- 1. Importamos el traductor
+import { marked } from 'marked';
 
 export async function getStaticPaths() {
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
   const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
   const supabase = createClient(supabaseUrl, supabaseKey);
-
   const { data: posts } = await supabase.from('posts').select('*');
-
   return posts.map((noticia) => ({
     params: { slug: noticia.slug },
     props: { noticia },
@@ -16,38 +15,32 @@ export async function getStaticPaths() {
 }
 
 const { noticia } = Astro.props;
-
-// 2. Convertimos el Markdown a HTML
 const contenidoHTML = marked.parse(noticia.content);
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{noticia.title}</title>
-  </head>
-  <body class="bg-slate-100 font-sans">
+<Layout title={noticia.title}>
+  <main class="max-w-3xl mx-auto px-4 py-12">
     
-    <div class="max-w-3xl mx-auto p-4 py-12">
-      <a href="/" class="text-blue-600 hover:underline mb-8 inline-block">← Volver al inicio</a>
+    <a href="/" class="inline-flex items-center text-gray-400 hover:text-cyan-400 mb-12 transition-colors group">
+      <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Volver al inicio
+    </a>
 
-      <article class="bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-4xl font-bold text-slate-900 mb-6 leading-tight">
-          {noticia.title}
-        </h1>
+    <article>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+        {noticia.title}
+      </h1>
 
-        <div class="text-sm text-slate-500 mb-8 border-b pb-4">
-          Publicado el: {new Date(noticia.created_at).toLocaleDateString()}
-        </div>
+      <div class="flex items-center gap-4 text-sm text-gray-400 mb-10 border-b border-white/10 pb-6">
+        <span class="bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 text-xs font-semibold">IA Generated</span>
+        <span>{new Date(noticia.created_at).toLocaleDateString()}</span>
+      </div>
 
-        <div 
-          class="prose prose-lg text-slate-700 max-w-none"
-          set:html={contenidoHTML} 
-        />
-          
-      </article>
-    </div>
+      <div 
+        class="prose prose-lg prose-invert max-w-none prose-a:text-cyan-400 prose-headings:text-white prose-strong:text-cyan-200"
+        set:html={contenidoHTML} 
+      />
+    </article>
 
-  </body>
-</html>
+  </main>
+</Layout>
