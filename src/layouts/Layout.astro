@@ -1,0 +1,43 @@
+---
+// 👇 ESTA ES LA LÍNEA QUE PEDÍA LA TERMINAL (Conecta los estilos)
+import '../styles/global.css'; 
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-[#0a0a0a] text-gray-100 min-h-screen font-sans selection:bg-cyan-500 selection:text-black">
+    
+    <div class="fixed inset-0 z-[-1] h-full w-full bg-[#0a0a0a]">
+      <div class="absolute top-0 -z-10 h-screen w-screen bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+    </div>
+
+    <nav class="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-md">
+      <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 group">
+          <span class="text-2xl">🚀</span>
+          <span class="font-bold text-xl tracking-tight group-hover:text-cyan-400 transition-colors">
+            Pathdawann<span class="text-cyan-400">.News</span>
+          </span>
+        </a>
+        <div class="hidden md:flex gap-6 text-sm font-medium text-gray-300">
+          <a href="#" class="hover:text-white transition-colors">Inicio</a>
+          <a href="#" class="hover:text-white transition-colors">Tendencias</a>
+        </div>
+      </div>
+    </nav>
+
+    <slot />
+
+    <footer class="py-12 text-center text-gray-600 text-sm border-t border-white/10 mt-20">
+      <p>&copy; 2026 Pathdawann News. Inspirado en el futuro.</p>
+    </footer>
+
+  </body>
+</html>
