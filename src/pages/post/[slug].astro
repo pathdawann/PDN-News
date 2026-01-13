@@ -15,29 +15,39 @@ export async function getStaticPaths() {
 }
 
 const { noticia } = Astro.props;
-const contenidoHTML = marked.parse(noticia.content);
+
+// 🔧 CORRECCIÓN 1: Activamos 'breaks: true'
+// Esto obliga a que cada "Enter" de la IA se convierta en un salto de línea real.
+const contenidoHTML = marked.parse(noticia.content, { breaks: true });
 ---
 
 <Layout title={noticia.title}>
   <main class="max-w-3xl mx-auto px-4 py-12">
     
-    <a href="/" class="inline-flex items-center text-gray-400 hover:text-cyan-400 mb-12 transition-colors group">
+    <a href="/" class="inline-flex items-center text-gray-400 hover:text-cyan-400 mb-12 transition-colors group text-sm font-medium">
       <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
       Volver al inicio
     </a>
 
     <article>
-      <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-8 leading-tight tracking-tight">
         {noticia.title}
       </h1>
 
-      <div class="flex items-center gap-4 text-sm text-gray-400 mb-10 border-b border-white/10 pb-6">
-        <span class="bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 text-xs font-semibold">IA Generated</span>
+      <div class="flex items-center gap-4 text-sm text-gray-400 mb-12 border-b border-white/10 pb-8">
+        <span class="bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 text-xs font-semibold uppercase tracking-wider">IA Generated</span>
         <span>{new Date(noticia.created_at).toLocaleDateString()}</span>
       </div>
 
       <div 
-        class="prose prose-lg prose-invert max-w-none prose-a:text-cyan-400 prose-headings:text-white prose-strong:text-cyan-200"
+        class="
+          prose prose-lg prose-invert max-w-none 
+          prose-p:text-gray-300 prose-p:my-6 prose-p:leading-relaxed
+          prose-headings:text-cyan-100 prose-headings:font-bold prose-headings:mt-12 prose-headings:mb-6 prose-headings:text-2xl
+          prose-strong:text-cyan-400 prose-strong:font-bold
+          prose-ul:list-disc prose-ul:pl-5 prose-li:my-2
+          prose-a:text-cyan-400 prose-a:underline hover:prose-a:text-cyan-300
+        "
         set:html={contenidoHTML} 
       />
     </article>
