@@ -2,13 +2,16 @@
 import Layout from '../../layouts/Layout.astro';
 import { createClient } from '@supabase/supabase-js';
 import { marked } from 'marked';
+// 👇 1. IMPORTAMOS LA SEGURIDAD
+import DOMPurify from 'isomorphic-dompurify';
 
 export async function getStaticPaths() {
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
   const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
   const supabase = createClient(supabaseUrl, supabaseKey);
   const { data: posts } = await supabase.from('posts').select('*');
-  return posts.map((noticia) => ({
+  // Usamos el operador ? para seguridad si la DB está vacía
+  return posts?.map((noticia) => ({
     params: { slug: noticia.slug },
     props: { noticia },
   }));
@@ -16,9 +19,13 @@ export async function getStaticPaths() {
 
 const { noticia } = Astro.props;
 
-// 🔧 CORRECCIÓN 1: Activamos 'breaks: true'
-// Esto obliga a que cada "Enter" de la IA se convierta en un salto de línea real.
-const contenidoHTML = marked.parse(noticia.content, { breaks: true });
+// 2. CONVERTIMOS MARKDOWN A HTML (TEXTO SUCIO)
+// 'breaks: true' mantiene los párrafos separados
+const rawHTML = marked.parse(noticia.content, { breaks: true });
+
+// 👇 3. SANITIZAMOS EL HTML (TEXTO LIMPIO)
+// Esto elimina cualquier script malicioso (<script>alert('hack')</script>)
+const cleanHTML = DOMPurify.sanitize(rawHTML);
 ---
 
 <Layout title={noticia.title}>
@@ -30,6 +37,17 @@ const contenidoHTML = marked.parse(noticia.content, { breaks: true });
     </a>
 
     <article>
+      {noticia.image_url && (
+        <div class="mb-10 rounded-xl overflow-hidden shadow-2xl shadow-cyan-900/20 border border-white/10 aspect-video relative">
+          <img 
+            src={noticia.image_url} 
+            alt={noticia.title}
+            class="w-full h-full object-cover"
+            transition:name={`image-${noticia.slug}`} 
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-60"></div>
+        </div>
+      )}
       <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-8 leading-tight tracking-tight">
         {noticia.title}
       </h1>
@@ -48,7 +66,7 @@ const contenidoHTML = marked.parse(noticia.content, { breaks: true });
           prose-ul:list-disc prose-ul:pl-5 prose-li:my-2
           prose-a:text-cyan-400 prose-a:underline hover:prose-a:text-cyan-300
         "
-        set:html={contenidoHTML} 
+        set:html={cleanHTML} 
       />
     </article>
 
