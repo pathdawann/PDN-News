@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import { createClient } from '@supabase/supabase-js';
 import { marked } from 'marked';
-// 👇 1. IMPORTAMOS LA SEGURIDAD
 import DOMPurify from 'isomorphic-dompurify';
 
 export async function getStaticPaths() {
@@ -10,7 +9,7 @@ export async function getStaticPaths() {
   const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
   const supabase = createClient(supabaseUrl, supabaseKey);
   const { data: posts } = await supabase.from('posts').select('*');
-  // Usamos el operador ? para seguridad si la DB está vacía
+  
   return posts?.map((noticia) => ({
     params: { slug: noticia.slug },
     props: { noticia },
@@ -19,16 +18,21 @@ export async function getStaticPaths() {
 
 const { noticia } = Astro.props;
 
-// 2. CONVERTIMOS MARKDOWN A HTML (TEXTO SUCIO)
-// 'breaks: true' mantiene los párrafos separados
+// 1. CONVERTIMOS MARKDOWN A HTML
 const rawHTML = marked.parse(noticia.content, { breaks: true });
 
-// 👇 3. SANITIZAMOS EL HTML (TEXTO LIMPIO)
-// Esto elimina cualquier script malicioso (<script>alert('hack')</script>)
+// 2. SANITIZAMOS (SEGURIDAD)
 const cleanHTML = DOMPurify.sanitize(rawHTML);
+
+// 3. GENERAMOS RESUMEN SEO (Limpiamos simbolos de markdown # o *)
+const resumenSEO = noticia.content.substring(0, 160).replace(/[#*]/g, '') + "...";
 ---
 
-<Layout title={noticia.title}>
+<Layout 
+  title={noticia.title} 
+  description={resumenSEO}
+  image={noticia.image_url} 
+>
   <main class="max-w-3xl mx-auto px-4 py-12">
     
     <a href="/" class="inline-flex items-center text-gray-400 hover:text-cyan-400 mb-12 transition-colors group text-sm font-medium">
@@ -48,6 +52,7 @@ const cleanHTML = DOMPurify.sanitize(rawHTML);
           <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-60"></div>
         </div>
       )}
+
       <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-8 leading-tight tracking-tight">
         {noticia.title}
       </h1>
