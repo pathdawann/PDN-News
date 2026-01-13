@@ -1,4 +1,5 @@
 ---
+import Newsletter from '../components/Newsletter.astro';
 import Layout from '../layouts/Layout.astro';
 import { createClient } from '@supabase/supabase-js';
 
@@ -76,5 +77,6 @@ if (error) console.log('Error:', error);
       ))}
 
     </div>
+    <Newsletter />
   </main>
 </Layout>

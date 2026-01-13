@@ -24,7 +24,7 @@ const rawHTML = marked.parse(noticia.content, { breaks: true });
 // 2. SANITIZAMOS (SEGURIDAD)
 const cleanHTML = DOMPurify.sanitize(rawHTML);
 
-// 3. GENERAMOS RESUMEN SEO (Limpiamos simbolos de markdown # o *)
+// 3. GENERAMOS RESUMEN SEO (Limpiamos símbolos de markdown # o *)
 const resumenSEO = noticia.content.substring(0, 160).replace(/[#*]/g, '') + "...";
 ---
 
