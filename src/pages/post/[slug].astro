@@ -25,7 +25,10 @@ const rawHTML = marked.parse(noticia.content, { breaks: true });
 const cleanHTML = DOMPurify.sanitize(rawHTML);
 
 // 3. GENERAMOS RESUMEN SEO (Limpiamos símbolos de markdown # o *)
-const resumenSEO = noticia.content.substring(0, 160).replace(/[#*]/g, '') + "...";
+// Si existe excerpt lo usamos, si no, limpiamos el HTML del content
+const resumenSEO = noticia.excerpt 
+  ? noticia.excerpt 
+  : noticia.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + "...";
 ---
 
 <Layout 
