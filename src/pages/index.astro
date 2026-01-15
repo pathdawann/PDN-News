@@ -39,10 +39,11 @@ if (error) console.log('Error:', error);
             <div class="w-full h-48 bg-gray-900 overflow-hidden relative">
               {noticia.image_url ? (
                 <img 
-                  src={noticia.image_url} 
+                  src={`https://wsrv.nl/?url=${encodeURIComponent(noticia.image_url)}&w=800&q=80`}
                   alt={noticia.title} 
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
+                  referrerpolicy="no-referrer"
                 />
               ) : (
                 // Placeholder si no hay imagen

@@ -47,10 +47,11 @@ const resumenSEO = noticia.excerpt
       {noticia.image_url && (
         <div class="mb-10 rounded-xl overflow-hidden shadow-2xl shadow-cyan-900/20 border border-white/10 aspect-video relative">
           <img 
-            src={noticia.image_url} 
+            src={`https://wsrv.nl/?url=${encodeURIComponent(noticia.image_url)}&w=1200&q=90`} 
             alt={noticia.title}
             class="w-full h-full object-cover"
             transition:name={`image-${noticia.slug}`} 
+            referrerpolicy="no-referrer"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-60"></div>
         </div>
