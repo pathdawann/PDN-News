@@ -62,8 +62,14 @@ const resumenSEO = noticia.excerpt
       </h1>
 
       <div class="flex items-center gap-4 text-sm text-gray-400 mb-12 border-b border-white/10 pb-8">
-        <span class="bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 text-xs font-semibold uppercase tracking-wider">IA Generated</span>
-        <span>{new Date(noticia.created_at).toLocaleDateString()}</span>
+        <span class="bg-blue-900/30 ...">IA Generated</span>
+        <span>
+          {new Date(noticia.created_at).toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          })}
+        </span>
       </div>
 
       <div 
